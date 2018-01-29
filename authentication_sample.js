@@ -50,6 +50,9 @@ function authUsingAdalCallback(vaultUri) {
     const keyVaultClient = new KeyVault.KeyVaultClient(new KeyVault.KeyVaultCredentials(adalCallback));
     
     // Using the key vault client, create and retrieve a sample secret.
+    // async.waterfall runs the functions provided in series by providing the next function as a callback. 
+    // If any function produces an error, the series is terminated and the final callback is called with the error as the first parameter. 
+    // For more, see: https://caolan.github.io/async/docs.html#waterfall
     async.waterfall([
             (callback) => {
                 // Set a sample secret in our Key Vault.
@@ -84,6 +87,7 @@ function runSample(demoCallback) {
         const resourceClient = new ResourceManagementClient(credentials, subscriptionId);
         const kvManagementClient = new KeyVaultManagementClient(credentials, subscriptionId);
         
+        // See above for explanation of async.waterfall
         async.waterfall([
             (callback) => {
                 // Create the sample resource group
