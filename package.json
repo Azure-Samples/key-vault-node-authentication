@@ -21,7 +21,6 @@
   "license": "MIT",
   "dependencies": {
     "adal-node": "^0.1.27",
-    "async": "^2.6.0",
     "azure-arm-keyvault": "^1.1.0-preview",
     "azure-arm-resource": "^3.1.0-preview",
     "azure-keyvault": "^2.0.1-preview",

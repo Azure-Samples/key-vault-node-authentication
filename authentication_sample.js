@@ -5,7 +5,6 @@
  */
 'use strict';
 
-const async = require('async');
 const util = require('util');
 const msRestAzure = require('ms-rest-azure');
 const KeyVault = require('azure-keyvault');
@@ -50,97 +49,72 @@ function authUsingAdalCallback(vaultUri) {
     const keyVaultClient = new KeyVault.KeyVaultClient(new KeyVault.KeyVaultCredentials(adalCallback));
     
     // Using the key vault client, create and retrieve a sample secret.
-    // async.waterfall runs the functions provided in series by providing the next function as a callback. 
-    // If any function produces an error, the series is terminated and the final callback is called with the error as the first parameter. 
-    // For more, see: https://caolan.github.io/async/docs.html#waterfall
-    async.waterfall([
-            (callback) => {
-                // Set a sample secret in our Key Vault.
-                console.log("Setting secret 'test-secret'");
-                keyVaultClient.setSecret(vaultUri, 'test-secret', 'test-secret-value', {}, callback);
-            },
-            (kvSecretBundle, httpReq, httpResponse, callback) => {
-                // Get the secret by its secret ID. 
-                console.log("Secret id: '" + kvSecretBundle.id + "'.");
-                keyVaultClient.getSecret(kvSecretBundle.id, {}, callback);
-            }
-        ], 
-        (err, bundle) => {
-            if(err) {
-                return console.log(err);
-            }
-            
-            console.log("Successfully retrieved 'test-secret'");
-            console.log(bundle);
-        }
-    );
+    console.log("Setting secret 'test-secret'");
+    
+    keyVaultClient.setSecret(vaultUri, 'test-secret', 'test-secret-value', {})
+    .then( (kvSecretBundle, httpReq, httpResponse) => {
+        console.log("Secret id: '" + kvSecretBundle.id + "'.");
+        return keyVaultClient.getSecret(kvSecretBundle.id, {});
+    })
+    .then( (bundle) => {
+        console.log("Successfully retrieved 'test-secret'");
+        console.log(bundle);
+    })
+    .catch( (err) => {
+        console.log(err);
+    });
 }
 
 // Sample setup: uses the resource management client to create a sample resource group
 // Then creates a key vault in this group and calls the authentication sample with the URI of the new vault. 
 function runSample(demoCallback) {
-    msRestAzure.loginWithServicePrincipalSecret(clientId, secret, tenantId, (err, credentials) => {
-        if(err) {
-            return console.log(err);
-        }
+    var resourceClient;
+    var kvManagementClient;
+    
+    msRestAzure.loginWithServicePrincipalSecret(clientId, secret, tenantId)
+    .then( (credentials) => {
+        resourceClient = new ResourceManagementClient(credentials, subscriptionId);
+        kvManagementClient = new KeyVaultManagementClient(credentials, subscriptionId);
         
-        const resourceClient = new ResourceManagementClient(credentials, subscriptionId);
-        const kvManagementClient = new KeyVaultManagementClient(credentials, subscriptionId);
-        
-        // See above for explanation of async.waterfall
-        async.waterfall([
-            (callback) => {
-                // Create the sample resource group
-                console.log("Creating resource group: " + groupName);
-                resourceClient.resourceGroups.createOrUpdate(groupName, { location: azureLocation }, (err) => { callback(err) });
-            },
-            
-            (callback) => {
-                // Params for sample key vault.
-                const kvParams = {
-                    location: azureLocation,
-                    properties: {
-                        sku: { 
-                            name: 'standard'
-                        },
-                        accessPolicies: [
-                            {
-                                tenantId: tenantId,
-                                objectId: objectId,
-                                permissions: {
-                                    secrets: ['all'],
-                                }
-                            }
-                        ],
-                        enabledForDeployment: false,
-                        tenantId: tenantId
-                    },
-                    tags: {}
-                };
-                
-                console.log("Creating key vault: " + kvName);
-                
-                // Create the sample key vault using the KV management client.
-                kvManagementClient.vaults.createOrUpdate(groupName, kvName, kvParams, (err, result) => {
-                    if(err) {
-                        return callback(err);
+        // Create sample resource group. 
+        console.log("Creating resource group: " + groupName);
+        return resourceClient.resourceGroups.createOrUpdate(groupName, { location: azureLocation });
+    }).then( () => {
+        const kvParams = {
+            location: azureLocation,
+            properties: {
+                sku: { 
+                    name: 'standard'
+                },
+                accessPolicies: [
+                    {
+                        tenantId: tenantId,
+                        objectId: objectId,
+                        permissions: {
+                            secrets: ['all'],
+                        }
                     }
-                    
-                    // Add a delay to wait for KV DNS record to be created. See: https://github.com/Azure/azure-sdk-for-node/pull/1938
-                    setTimeout(() => { 
-                        callback(null, result.properties.vaultUri);
-                    }, 5000);
-                });
+                ],
+                enabledForDeployment: false,
+                tenantId: tenantId
             },
+            tags: {}
+        };
             
-            demoCallback
-        ],
+        console.log("Creating key vault: " + kvName);
+            
+        // Create the sample key vault using the KV management client.
+        return kvManagementClient.vaults.createOrUpdate(groupName, kvName, kvParams);
+    }).then( (result) => {
+        console.log("Vault created with URI '" + result.properties.vaultUri + "'");
         
-        (err) => {
-            if(err) {
-                console.log(err);
-            }
-        });
+        // Add a delay to wait for KV DNS record to be created. See: https://github.com/Azure/azure-sdk-for-node/pull/1938
+        setTimeout(() => {
+            demoCallback(result.properties.vaultUri);
+        }, 5000);
+    })
+    .catch( (err) => { 
+        console.log(err); 
     });
 }
 
