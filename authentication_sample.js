@@ -42,6 +42,8 @@ function authUsingAdalCallback(vaultUri) {
                 throw err;
             }
             
+            // The KeyVaultCredentials callback expects an error, if any, as the first parameter. 
+            // It then expects a value for the HTTP 'Authorization' header, which we compute based upon the access token obtained with the SP client credentials. 
             return callback(null, tokenResponse.tokenType + ' ' + tokenResponse.accessToken);
         });
     };
