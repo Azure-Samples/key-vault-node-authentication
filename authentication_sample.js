@@ -114,7 +114,7 @@ function runSample(demoCallback) {
         // Add a delay to wait for KV DNS record to be created. See: https://github.com/Azure/azure-sdk-for-node/pull/1938
         setTimeout(() => {
             demoCallback(result.properties.vaultUri);
-        }, 5000);
+        }, 15000);
     })
     .catch( (err) => { 
         console.log(err); 
