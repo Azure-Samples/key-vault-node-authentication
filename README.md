@@ -1,7 +1,7 @@
 ---
 services: key-vault
 platforms: nodejs
-author: dadesber
+author: lusitanian
 ---
 
 # Authentication sample for Azure Key Vault using the Azure Node SDK
