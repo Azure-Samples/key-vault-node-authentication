@@ -23,8 +23,7 @@
     "adal-node": "^0.1.28",
     "azure-arm-keyvault": "^1.1.0-preview",
     "azure-arm-resource": "^3.1.0-preview",
-    "azure-keyvault": "^2.0.1-preview",
-    "ms-rest-azure": "^2.5.5"
+    "azure-keyvault": "^2.0.2-preview"
   },
   "homepage": "https://github.com/Azure-Samples/key-vault-node-authentication",
   "repository": {
