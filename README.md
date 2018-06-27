@@ -22,7 +22,7 @@ In addition you would need
     * For the purpose of this tutorial we would work with Azure CLI which is available on Windows, Mac and Linux
 
 
-## How to run this sample
+## Quickstart
 
 1. If you don't already have it, get [node.js](https://nodejs.org).
 
