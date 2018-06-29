@@ -57,7 +57,8 @@ function authUsingAdalCallback(vaultUri) {
     keyVaultClient.setSecret(vaultUri, 'test-secret', 'test-secret-value', {})
     .then( (kvSecretBundle, httpReq, httpResponse) => {
         console.log("Secret id: '" + kvSecretBundle.id + "'.");
-        return keyVaultClient.getSecret(kvSecretBundle.id, {});
+        var secretId = KeyVault.parseSecretIdentifier(kvSecretBundle.id);
+        return keyVaultClient.getSecret(secretId.vault, secretId.name, secretId.version);
     })
     .then( (bundle) => {
         console.log("Successfully retrieved 'test-secret'");
@@ -110,11 +111,7 @@ function runSample(demoCallback) {
         return kvManagementClient.vaults.createOrUpdate(groupName, kvName, kvParams);
     }).then( (result) => {
         console.log("Vault created with URI '" + result.properties.vaultUri + "'");
-        
-        // Add a delay to wait for KV DNS record to be created. See: https://github.com/Azure/azure-sdk-for-node/pull/1938
-        setTimeout(() => {
-            demoCallback(result.properties.vaultUri);
-        }, 15000);
+        demoCallback(result.properties.vaultUri);
     })
     .catch( (err) => { 
         console.log(err); 
