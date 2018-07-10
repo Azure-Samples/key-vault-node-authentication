@@ -10,8 +10,19 @@ This sample repo demonstrates how to connect and authenticate to an Azure Key Va
 To do so, it first uses the Key Vault Management Client to create a vault.
 The Key Vault client is then used to authenticate to the vault and set/retrieve a sample secret. 
 
+## Prerequisites
+If you don't have an Azure subscription, please create a **[free account](https://azure.microsoft.com/free/?ref=microsoft.com&amp;utm_source=microsoft.com&amp;utm_medium=docs)** before you begin.
+In addition you would need
 
-## How to run this sample
+* [Node](https://nodejs.org/)
+    * Please install Node JS. This can be run on Windows, Mac and Linux.
+* [Git](https://www.git-scm.com/)
+    * Please download git from [here](https://git-scm.com/downloads).
+* [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
+    * For the purpose of this tutorial we would work with Azure CLI which is available on Windows, Mac and Linux
+
+
+## Quickstart
 
 1. If you don't already have it, get [node.js](https://nodejs.org).
 
