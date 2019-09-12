@@ -1,7 +1,11 @@
 ---
-services: key-vault
-platforms: nodejs
-author: lusitanian
+page_type: sample
+languages:
+- javascript
+products:
+- azure
+description: "This sample repo demonstrates how to connect and authenticate to an Azure Key Vault vault."
+urlFragment: key-vault-node-authentication
 ---
 
 # Authentication sample for Azure Key Vault using the Azure Node SDK
