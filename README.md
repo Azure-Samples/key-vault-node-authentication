@@ -22,7 +22,7 @@ In addition you would need
     * Please install Node JS. This can be run on Windows, Mac and Linux.
 * [Git](https://www.git-scm.com/)
     * Please download git from [here](https://git-scm.com/downloads).
-* [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
+* [Azure CLI](https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest)
     * For the purpose of this tutorial we would work with Azure CLI which is available on Windows, Mac and Linux
 
 
