@@ -17,7 +17,7 @@ const random_id = require('./random_id');
 const azureLocation = process.env['AZURE_LOCATION'] || 'westus';
 const groupName = process.env['AZURE_RESOURCE_GROUP'] || 'azure-sample-group';
 
-// Make sure the required environment variables are set.
+// Make sure the required environment variables are set. 
 _validateEnvironmentVariables();
 
 // Service principal details for running the sample
