@@ -15,10 +15,10 @@ To do so, it first uses the Key Vault Management Client to create a vault.
 The Key Vault client is then used to authenticate to the vault and set/retrieve a sample secret. 
 
 ## This sample shows how to do the following operations of Key Vault secret with Key Vault SDK
-- create a sample resource group by the resource management client
-- create a key vault by the Key Vault Management Client
-- set the secret
-- get the secret
+- Create a sample resource group by the resource management client
+- Create a key vault by the Key Vault Management Client
+- Create the secret
+- Get the secret
 
 ## Prerequisites
 If you don't have an Azure subscription, please create a **[free account](https://azure.microsoft.com/free/?ref=microsoft.com&amp;utm_source=microsoft.com&amp;utm_medium=docs)** before you begin.
@@ -80,10 +80,10 @@ The Key Vault secrets SDK here is **@azure/keyvault-secrets**, if you are using 
 
  * [helloworld.ts](https://github.com/Azure/azure-sdk-for-js/blob/master/sdk/keyvault/keyvault-secrets/samples/typescript/src/helloWorld.ts) - Examples for common Key Vault secret tasks:
 
- * create a new secret
- * get the secret
- * update the secret
- * delete the secret
+ * Create a new secret
+ * Get the secret
+ * Update the secret
+ * Delete the secret
 
 ## References and further reading
 
