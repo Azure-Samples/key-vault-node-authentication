@@ -80,10 +80,10 @@ The Key Vault secrets SDK here is **@azure/keyvault-secrets**, if you are using 
 
  * [helloworld.ts](https://github.com/Azure/azure-sdk-for-js/blob/master/sdk/keyvault/keyvault-secrets/samples/typescript/src/helloWorld.ts) - Examples for common Key Vault secret tasks:
 
- * Create a new secret
- * Get the secret
- * Update the secret
- * Delete the secret
+   * Create a new secret
+   * Get the secret
+   * Update the secret
+   * Delete the secret
 
 ## References and further reading
 
