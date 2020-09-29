@@ -20,6 +20,17 @@ The Key Vault client is then used to authenticate to the vault and set/retrieve 
 - Create the secret
 - Get the secret
 
+## Use latest Key Vault SDK
+
+The Key Vault secrets SDK in this repo is **@azure/keyvault-secrets**. It's strongly recommended that you use the [latest](https://www.npmjs.com/package/@azure/keyvault-secrets) version of the key vault SDK package, please refer to the following examples:
+
+ * [helloworld.ts](https://github.com/Azure/azure-sdk-for-js/blob/master/sdk/keyvault/keyvault-secrets/samples/typescript/src/helloWorld.ts) - Examples for common Key Vault secret tasks:
+
+   * Create a new secret
+   * Get the secret
+   * Update the secret
+   * Delete the secret
+
 ## Prerequisites
 If you don't have an Azure subscription, please create a **[free account](https://azure.microsoft.com/free/?ref=microsoft.com&amp;utm_source=microsoft.com&amp;utm_medium=docs)** before you begin.
 In addition you would need
@@ -73,17 +84,6 @@ In addition you would need
     ```
     node authentication_sample.js
     ```
-
-## Use latest Key Vault SDK
-
-The Key Vault secrets SDK here is **@azure/keyvault-secrets**, if you are using the [latest](https://www.npmjs.com/package/@azure/keyvault-secrets) version of the key vault SDK package, please refer to the following examples:
-
- * [helloworld.ts](https://github.com/Azure/azure-sdk-for-js/blob/master/sdk/keyvault/keyvault-secrets/samples/typescript/src/helloWorld.ts) - Examples for common Key Vault secret tasks:
-
-   * Create a new secret
-   * Get the secret
-   * Update the secret
-   * Delete the secret
 
 ## References and further reading
 

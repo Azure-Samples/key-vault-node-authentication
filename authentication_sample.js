@@ -2,11 +2,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See LICENSE in the project root for
  * license information.
+ * 
+ * This file uses an outdated library.  Please see the readme to find the latest version.
  */
 'use strict';
 
 const util = require('util');
 const msRestAzure = require('ms-rest-azure');
+// Deprecated Libraries
 const KeyVault = require('azure-keyvault');
 const AuthenticationContext = require('adal-node').AuthenticationContext;
 const KeyVaultManagementClient = require('azure-arm-keyvault');
@@ -48,16 +51,22 @@ function authUsingAdalCallback(vaultUri) {
             return callback(null, tokenResponse.tokenType + ' ' + tokenResponse.accessToken);
         });
     };
-    
+
+    // Deprecated Libraries
     const keyVaultClient = new KeyVault.KeyVaultClient(new KeyVault.KeyVaultCredentials(adalCallback));
     
     // Using the key vault client, create and retrieve a sample secret.
     console.log("Setting secret 'test-secret'");
     
+    // Deprecated Libraries
     keyVaultClient.setSecret(vaultUri, 'test-secret', 'test-secret-value', {})
     .then( (kvSecretBundle, httpReq, httpResponse) => {
         console.log("Secret id: '" + kvSecretBundle.id + "'.");
+
+        // Deprecated Libraries
         var secretId = KeyVault.parseSecretIdentifier(kvSecretBundle.id);
+
+        // Deprecated Libraries
         return keyVaultClient.getSecret(secretId.vault, secretId.name, secretId.version);
     })
     .then( (bundle) => {
