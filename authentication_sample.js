@@ -2,15 +2,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See LICENSE in the project root for
  * license information.
- * 
- * This file uses an outdated library.  Please see the readme to find the latest version.
  */
 'use strict';
 
 const util = require('util');
 const msRestNodeAuth  = require('@azure/ms-rest-nodeauth');
 const { SecretClient } = require('@azure/keyvault-secrets');
-const { DefaultAzureCredential } = require('@azure/identity')
+const { ClientSecretCredential } = require('@azure/identity');
 const { KeyVaultManagementClient } = require('@azure/arm-keyvault');
 const { ResourceManagementClient } = require('@azure/arm-resources');
 const random_id = require('./random_id');
@@ -34,8 +32,8 @@ const kvName = random_id();
 
 function authUsingAAD(vaultUri) {
     console.log("Using AAD to authenticate to '" + vaultUri + "'");
-    
-    const credentials = new DefaultAzureCredential();
+
+    const credentials = new ClientSecretCredential(tenantId, clientId, secret);
     const secretClient = new SecretClient(vaultUri, credentials);
     
     // Using the key vault client, create and retrieve a sample secret.
