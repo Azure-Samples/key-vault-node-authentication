@@ -20,10 +20,11 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "adal-node": "^0.1.28",
-    "azure-arm-keyvault": "^1.1.2",
-    "azure-arm-resource": "^3.1.1-preview",
-    "azure-keyvault": "^3.0.4"
+    "@azure/arm-keyvault": "^1.2.1",
+    "@azure/arm-resources": "^4.0.0",
+    "@azure/identity": "^1.2.2",
+    "@azure/keyvault-secrets": "^4.1.0",
+    "@azure/ms-rest-nodeauth": "^3.0.6"
   },
   "homepage": "https://github.com/Azure-Samples/key-vault-node-authentication",
   "repository": {

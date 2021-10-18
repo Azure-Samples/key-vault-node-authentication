@@ -12,7 +12,7 @@ urlFragment: key-vault-node-authentication
 
 This sample repo demonstrates how to connect and authenticate to an Azure Key Vault vault. 
 To do so, it first uses the Key Vault Management Client to create a vault.
-The Key Vault client is then used to authenticate to the vault and set/retrieve a sample secret. 
+The Key Vault secret client is then used to authenticate to the vault and set/retrieve a sample secret. 
 
 ## Prerequisites
 If you don't have an Azure subscription, please create a **[free account](https://azure.microsoft.com/free/?ref=microsoft.com&amp;utm_source=microsoft.com&amp;utm_medium=docs)** before you begin.
@@ -28,29 +28,27 @@ In addition you would need
 
 ## Quickstart
 
-1. If you don't already have it, get [node.js](https://nodejs.org).
-
-2. Clone the repo.
+1. Clone the repo.
 
    ```
    git clone https://github.com/Azure-Samples/key-vault-node-authentication.git key-vault
    ```
 
-3. Install the dependencies.
+2. Install the dependencies.
 
    ```
    cd key-vault
    npm install
    ```
 
-4. Create an Azure service principals, using one of the following:
+3. Create an Azure service principals, using one of the following:
    - [Azure CLI](https://azure.microsoft.com/documentation/articles/resource-group-authenticate-service-principal-cli/),
    - [PowerShell](https://azure.microsoft.com/documentation/articles/resource-group-authenticate-service-principal/)
    - [Azure Portal](https://azure.microsoft.com/documentation/articles/resource-group-create-service-principal-portal/). 
 
     This service principal is to run the sample on your azure account.
 
-5. Set the following environment variables using the information from the service principal that you created.
+4. Set the following environment variables using the information from the service principal that you created.
 
    ```
    export AZURE_SUBSCRIPTION_ID={your subscription id}
@@ -62,7 +60,7 @@ In addition you would need
 
 > On Windows, use `set` instead of `export`.
 
-6. Run the sample.
+5. Run the sample.
 
     ```
     node authentication_sample.js
@@ -70,7 +68,10 @@ In addition you would need
 
 ## References and further reading
 
-- [Azure SDK for Node.js](https://github.com/Azure/azure-sdk-for-node)
+- [More samples for Key Vault secrets](https://github.com/Azure/azure-sdk-for-js/tree/master/sdk/keyvault/keyvault-secrets/samples)
+- [@azure/keyvault-secrets package](https://www.npmjs.com/package/@azure/keyvault-secrets)
+- [@azure/arm-keyvault package](https://www.npmjs.com/package/@azure/arm-keyvault)
+- [@azure/arm-resources package](https://www.npmjs.com/package/@azure/arm-resources)
 - [Azure KeyVault Documentation](https://azure.microsoft.com/en-us/documentation/services/key-vault/)
 - [Key Vault REST API Reference](https://msdn.microsoft.com/en-us/library/azure/dn903609.aspx)
 - [Manage Key Vault using CLI](https://azure.microsoft.com/en-us/documentation/articles/key-vault-manage-with-cli/)

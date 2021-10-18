@@ -6,11 +6,11 @@
 'use strict';
 
 const util = require('util');
-const msRestAzure = require('ms-rest-azure');
-const KeyVault = require('azure-keyvault');
-const AuthenticationContext = require('adal-node').AuthenticationContext;
-const KeyVaultManagementClient = require('azure-arm-keyvault');
-const ResourceManagementClient = require('azure-arm-resource').ResourceManagementClient;
+const msRestNodeAuth  = require('@azure/ms-rest-nodeauth');
+const { SecretClient } = require('@azure/keyvault-secrets');
+const { ClientSecretCredential } = require('@azure/identity');
+const { KeyVaultManagementClient } = require('@azure/arm-keyvault');
+const { ResourceManagementClient } = require('@azure/arm-resources');
 const random_id = require('./random_id');
 
 // Sample config
@@ -30,35 +30,20 @@ const secret = process.env['AZURE_CLIENT_SECRET'];
 // Random sample keyvault name
 const kvName = random_id();
 
-// Authenticates to the Azure Key Vault by providing a callback to authenticate using ADAL.
-function authUsingAdalCallback(vaultUri) {
-    console.log("Using ADAL to authenticate to '" + vaultUri + "'");
-    
-    // Callback for ADAL authentication.
-    const adalCallback = (challenge, callback) => {
-        const context = new AuthenticationContext(challenge.authorization);
-        return context.acquireTokenWithClientCredentials(challenge.resource, clientId, secret, (err, tokenResponse) => {
-            if(err) {
-                throw err;
-            }
-            
-            // The KeyVaultCredentials callback expects an error, if any, as the first parameter. 
-            // It then expects a value for the HTTP 'Authorization' header, which we compute based upon the access token obtained with the SP client credentials. 
-            // The token type will generally equal 'Bearer' - in some user-specific situations, a different type of token may be issued. 
-            return callback(null, tokenResponse.tokenType + ' ' + tokenResponse.accessToken);
-        });
-    };
-    
-    const keyVaultClient = new KeyVault.KeyVaultClient(new KeyVault.KeyVaultCredentials(adalCallback));
+function authUsingAAD(vaultUri) {
+    console.log("Using AAD to authenticate to '" + vaultUri + "'");
+
+    const credentials = new ClientSecretCredential(tenantId, clientId, secret);
+    const secretClient = new SecretClient(vaultUri, credentials);
     
     // Using the key vault client, create and retrieve a sample secret.
     console.log("Setting secret 'test-secret'");
     
-    keyVaultClient.setSecret(vaultUri, 'test-secret', 'test-secret-value', {})
-    .then( (kvSecretBundle, httpReq, httpResponse) => {
-        console.log("Secret id: '" + kvSecretBundle.id + "'.");
-        var secretId = KeyVault.parseSecretIdentifier(kvSecretBundle.id);
-        return keyVaultClient.getSecret(secretId.vault, secretId.name, secretId.version);
+    secretClient.setSecret('test-secret', 'test-secret-value')
+    .then( (kvSecretBundle) => {
+        console.log("Secret id: '" + kvSecretBundle.properties.id + "'.");
+
+        return secretClient.getSecret('test-secret');
     })
     .then( (bundle) => {
         console.log("Successfully retrieved 'test-secret'");
@@ -75,7 +60,7 @@ function runSample(demoCallback) {
     var resourceClient;
     var kvManagementClient;
     
-    msRestAzure.loginWithServicePrincipalSecret(clientId, secret, tenantId)
+    msRestNodeAuth.loginWithServicePrincipalSecret(clientId, secret, tenantId)
     .then( (credentials) => {
         resourceClient = new ResourceManagementClient(credentials, subscriptionId);
         kvManagementClient = new KeyVaultManagementClient(credentials, subscriptionId);
@@ -133,5 +118,5 @@ function _validateEnvironmentVariables() {
 }
 
 // Main entry point.
-console.log('Running authentication sample using ADAL callback.');
-runSample(authUsingAdalCallback);
+console.log('Running authentication sample using AAD.');
+runSample(authUsingAAD);
