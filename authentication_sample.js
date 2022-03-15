@@ -6,8 +6,7 @@
 'use strict';
 
 const util = require('util');
-const msRestNodeAuth  = require('@azure/ms-rest-nodeauth');
-const { SecretClient } = require('@azure/keyvault-secrets');
+import { ClientSecretCredential } from "@azure/identity";
 const { ClientSecretCredential } = require('@azure/identity');
 const { KeyVaultManagementClient } = require('@azure/arm-keyvault');
 const { ResourceManagementClient } = require('@azure/arm-resources');
@@ -30,77 +29,50 @@ const secret = process.env['AZURE_CLIENT_SECRET'];
 // Random sample keyvault name
 const kvName = random_id();
 
-function authUsingAAD(vaultUri) {
-    console.log("Using AAD to authenticate to '" + vaultUri + "'");
-
-    const credentials = new ClientSecretCredential(tenantId, clientId, secret);
-    const secretClient = new SecretClient(vaultUri, credentials);
-    
-    // Using the key vault client, create and retrieve a sample secret.
-    console.log("Setting secret 'test-secret'");
-    
-    secretClient.setSecret('test-secret', 'test-secret-value')
-    .then( (kvSecretBundle) => {
-        console.log("Secret id: '" + kvSecretBundle.properties.id + "'.");
-
-        return secretClient.getSecret('test-secret');
-    })
-    .then( (bundle) => {
-        console.log("Successfully retrieved 'test-secret'");
-        console.log(bundle);
-    })
-    .catch( (err) => {
-        console.log(err);
-    });
-}
+const credentials = new ClientSecretCredential(tenantId,clientId,secret);
 
 // Sample setup: uses the resource management client to create a sample resource group
 // Then creates a key vault in this group and calls the authentication sample with the URI of the new vault. 
-function runSample(demoCallback) {
+function runSample(credentials) {
     var resourceClient;
     var kvManagementClient;
-    
-    msRestNodeAuth.loginWithServicePrincipalSecret(clientId, secret, tenantId)
-    .then( (credentials) => {
-        resourceClient = new ResourceManagementClient(credentials, subscriptionId);
-        kvManagementClient = new KeyVaultManagementClient(credentials, subscriptionId);
-        
-        // Create sample resource group. 
-        console.log("Creating resource group: " + groupName);
-        return resourceClient.resourceGroups.createOrUpdate(groupName, { location: azureLocation });
-    }).then( () => {
-        const kvParams = {
-            location: azureLocation,
-            properties: {
-                sku: { 
-                    name: 'standard'
-                },
-                accessPolicies: [
-                    {
-                        tenantId: tenantId,
-                        objectId: objectId,
-                        permissions: {
-                            secrets: ['all'],
-                        }
-                    }
-                ],
-                enabledForDeployment: false,
-                tenantId: tenantId
+
+    resourceClient = new ResourceManagementClient(credentials, subscriptionId);
+    kvManagementClient = new KeyVaultManagementClient(credentials, subscriptionId);
+
+    // Create sample resource group. 
+    console.log("Creating resource group: " + groupName);
+    await resourceClient.resourceGroups.createOrUpdate(groupName, { location: azureLocation });
+
+    const kvParams = {
+        location: azureLocation,
+        properties: {
+            sku: { 
+                name: 'standard'
             },
-            tags: {}
-        };
-            
-        console.log("Creating key vault: " + kvName);
-            
-        // Create the sample key vault using the KV management client.
-        return kvManagementClient.vaults.createOrUpdate(groupName, kvName, kvParams);
-    }).then( (result) => {
+            accessPolicies: [
+                {
+                    tenantId: tenantId,
+                    objectId: objectId,
+                    permissions: {
+                        secrets: ['all'],
+                    }
+                }
+            ],
+            enabledForDeployment: false,
+            tenantId: tenantId
+        },
+        tags: {}
+    };
+        
+    console.log("Creating key vault: " + kvName);
+
+    // Create the sample key vault using the KV management client.
+    await kvManagementClient.vaults.beginCreateOrUpdateAndWait(groupName, kvName, kvParams).then( (result) =>{
         console.log("Vault created with URI '" + result.properties.vaultUri + "'");
-        demoCallback(result.properties.vaultUri);
-    })
-    .catch( (err) => { 
+    }).catch ( (err) => {
         console.log(err); 
-    });
+    })
 }
 
 // Small util to validate that we have the correct environment variables set. 
@@ -119,4 +91,4 @@ function _validateEnvironmentVariables() {
 
 // Main entry point.
 console.log('Running authentication sample using AAD.');
-runSample(authUsingAAD);
+runSample(credentials);
