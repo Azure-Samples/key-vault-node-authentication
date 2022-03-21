@@ -23,8 +23,7 @@
     "@azure/arm-keyvault": "^2.0.0",
     "@azure/arm-resources": "^5.0.0",
     "@azure/identity": "^2.0.1",
-    "@azure/keyvault-secrets": "^4.1.0",
-    "@azure/ms-rest-nodeauth": "^3.0.6"
+    "@azure/keyvault-secrets": "^4.1.0"
   },
   "homepage": "https://github.com/Azure-Samples/key-vault-node-authentication",
   "repository": {
