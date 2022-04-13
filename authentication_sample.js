@@ -7,7 +7,6 @@
 
 const util = require('util');
 import { ClientSecretCredential } from "@azure/identity";
-const msRestNodeAuth  = require('@azure/ms-rest-nodeauth');
 const { SecretClient } = require('@azure/keyvault-secrets');
 const { ClientSecretCredential } = require('@azure/identity');
 const { KeyVaultManagementClient } = require('@azure/arm-keyvault');
@@ -93,7 +92,7 @@ function runSample(demoCallback) {
     console.log("Creating key vault: " + kvName);
         
     // Create the sample key vault using the KV management client.
-    await kvManagementClient.vaults.createOrUpdate(groupName, kvName, kvParams)
+    await kvManagementClient.vaults.beginCreateOrUpdateAndWait(groupName, kvName, kvParams)
     .catch ( (err) => {
         console.log(err); 
     });
