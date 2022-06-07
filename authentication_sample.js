@@ -6,9 +6,9 @@
 'use strict';
 
 const util = require('util');
-import { ClientSecretCredential } from "@azure/identity";
+import { DefaultAzureCredential } from "@azure/identity";
 const { SecretClient } = require('@azure/keyvault-secrets');
-const { ClientSecretCredential } = require('@azure/identity');
+const { DefaultAzureCredential } = require('@azure/identity');
 const { KeyVaultManagementClient } = require('@azure/arm-keyvault');
 const { ResourceManagementClient } = require('@azure/arm-resources');
 const random_id = require('./random_id');
@@ -33,7 +33,7 @@ const kvName = random_id();
 function authUsingAAD(vaultUri) {
     console.log("Using AAD to authenticate to '" + vaultUri + "'");
 
-    const credentials = new ClientSecretCredential(tenantId,clientId,secret);
+    const credentials = new DefaultAzureCredential();
     const secretClient = new SecretClient(vaultUri, credentials);
     
     // Using the key vault client, create and retrieve a sample secret.
@@ -60,7 +60,7 @@ function runSample(demoCallback) {
     var resourceClient;
     var kvManagementClient;
     
-    const credentials = new ClientSecretCredential(tenantId,clientId,secret);
+    const credentials = new DefaultAzureCredential();
     resourceClient = new ResourceManagementClient(credentials, subscriptionId);
     kvManagementClient = new KeyVaultManagementClient(credentials, subscriptionId);
     
