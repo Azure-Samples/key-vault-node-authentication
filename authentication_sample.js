@@ -6,9 +6,9 @@
 'use strict';
 
 const util = require('util');
-const msRestNodeAuth  = require('@azure/ms-rest-nodeauth');
+import { DefaultAzureCredential } from "@azure/identity";
 const { SecretClient } = require('@azure/keyvault-secrets');
-const { ClientSecretCredential } = require('@azure/identity');
+const { DefaultAzureCredential } = require('@azure/identity');
 const { KeyVaultManagementClient } = require('@azure/arm-keyvault');
 const { ResourceManagementClient } = require('@azure/arm-resources');
 const random_id = require('./random_id');
@@ -33,7 +33,7 @@ const kvName = random_id();
 function authUsingAAD(vaultUri) {
     console.log("Using AAD to authenticate to '" + vaultUri + "'");
 
-    const credentials = new ClientSecretCredential(tenantId, clientId, secret);
+    const credentials = new DefaultAzureCredential();
     const secretClient = new SecretClient(vaultUri, credentials);
     
     // Using the key vault client, create and retrieve a sample secret.
@@ -60,47 +60,44 @@ function runSample(demoCallback) {
     var resourceClient;
     var kvManagementClient;
     
-    msRestNodeAuth.loginWithServicePrincipalSecret(clientId, secret, tenantId)
-    .then( (credentials) => {
-        resourceClient = new ResourceManagementClient(credentials, subscriptionId);
-        kvManagementClient = new KeyVaultManagementClient(credentials, subscriptionId);
-        
-        // Create sample resource group. 
-        console.log("Creating resource group: " + groupName);
-        return resourceClient.resourceGroups.createOrUpdate(groupName, { location: azureLocation });
-    }).then( () => {
-        const kvParams = {
-            location: azureLocation,
-            properties: {
-                sku: { 
-                    name: 'standard'
-                },
-                accessPolicies: [
-                    {
-                        tenantId: tenantId,
-                        objectId: objectId,
-                        permissions: {
-                            secrets: ['all'],
-                        }
-                    }
-                ],
-                enabledForDeployment: false,
-                tenantId: tenantId
+    const credentials = new DefaultAzureCredential();
+    resourceClient = new ResourceManagementClient(credentials, subscriptionId);
+    kvManagementClient = new KeyVaultManagementClient(credentials, subscriptionId);
+    
+    // Create sample resource group. 
+    console.log("Creating resource group: " + groupName);
+    await resourceClient.resourceGroups.createOrUpdate(groupName, { location: azureLocation });
+    
+    const kvParams = {
+        location: azureLocation,
+        properties: {
+            sku: { 
+                name: 'standard'
             },
-            tags: {}
-        };
+            accessPolicies: [
+                {
+                    tenantId: tenantId,
+                    objectId: objectId,
+                    permissions: {
+                        secrets: ['all'],
+                    }
+                }
+            ],
+            enabledForDeployment: false,
+            tenantId: tenantId
+        },
+        tags: {}
+    };
             
-        console.log("Creating key vault: " + kvName);
-            
-        // Create the sample key vault using the KV management client.
-        return kvManagementClient.vaults.createOrUpdate(groupName, kvName, kvParams);
-    }).then( (result) => {
-        console.log("Vault created with URI '" + result.properties.vaultUri + "'");
-        demoCallback(result.properties.vaultUri);
-    })
-    .catch( (err) => { 
+    console.log("Creating key vault: " + kvName);
+        
+    // Create the sample key vault using the KV management client.
+    await kvManagementClient.vaults.beginCreateOrUpdateAndWait(groupName, kvName, kvParams)
+    .catch ( (err) => {
         console.log(err); 
     });
+    console.log("Vault created with URI '" + result.properties.vaultUri + "'");
+    demoCallback(result.properties.vaultUri);
 }
 
 // Small util to validate that we have the correct environment variables set. 
